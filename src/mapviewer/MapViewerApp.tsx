@@ -6,7 +6,7 @@ import WebFont from "webfontloader";
 import { OsrsLoadingBar } from "../components/rs/loading/OsrsLoadingBar";
 import { DownloadProgress } from "../rs/cache/CacheFiles";
 import { formatBytes } from "../util/BytesUtil";
-import { isIos, isWallpaperEngine } from "../util/DeviceUtil";
+import { isWallpaperEngine } from "../util/DeviceUtil";
 import { fetchCacheList, loadCacheFiles } from "./Caches";
 import { MapViewer } from "./MapViewer";
 import { MapViewerContainer } from "./MapViewerContainer";
@@ -66,11 +66,7 @@ function MapViewerApp() {
             setMapViewer(mapViewer);
         };
 
-        if (isIos) {
-            setErrorMessage("iOS is not supported.");
-        } else {
-            load().catch(console.error);
-        }
+        load().catch(console.error);
 
         return () => {
             abortController.abort();
