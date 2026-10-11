@@ -768,8 +768,17 @@ export class WebGLMapViewerRenderer extends MapViewerRenderer<WebGLMapSquare> {
         return map.getHeightInterp(0, fineX & 0x1fff, fineZ & 0x1fff);
     }
 
+    // Resize the framebuffers here, not in render: render skips frames until the shaders compile
+    // (slow on phones), so a resize it skipped left them at the canvas's initial 300x150.
     override onResize(width: number, height: number): void {
         this.app.resize(width, height);
+
+        this.framebuffer?.resize();
+        this.textureFramebuffer?.resize();
+        this.interactFramebuffer?.resize();
+
+        this.resolutionUni[0] = this.app.width;
+        this.resolutionUni[1] = this.app.height;
     }
 
     override render(time: number, deltaTime: number, resized: boolean): void {
@@ -812,15 +821,6 @@ export class WebGLMapViewerRenderer extends MapViewerRenderer<WebGLMapSquare> {
             !this.textureMaterials
         ) {
             return;
-        }
-
-        if (resized) {
-            this.framebuffer.resize();
-            this.textureFramebuffer.resize();
-            this.interactFramebuffer.resize();
-
-            this.resolutionUni[0] = this.app.width;
-            this.resolutionUni[1] = this.app.height;
         }
 
         const inputManager = this.mapViewer.inputManager;
